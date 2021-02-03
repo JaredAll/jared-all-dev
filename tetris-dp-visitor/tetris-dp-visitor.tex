@@ -84,29 +84,4 @@
 
 \end{figure}
 
-\begin{figure}
-
-  \begin{center}
-    \begin{tikzpicture}
-
-      \umlclass[x=2, y=0, width=15ex]{Game}{
-        unique\_ptr$<$TetrisVisitor$>$ visitor \\
-        vector$<$unique\_ptr$<$TetrisComponent$>>$ components
-      }{
-        update\_components(): void \\
-        \{ \\
-        \hspace{0.3cm} for( auto\& component : components ) \\
-        \hspace{0.3cm} \{ \\
-        \hspace{0.6cm} component --$>$ accept( *visitor ) \\
-        \hspace{0.3cm} \} \\
-        \} \\
-      }
-      
-    \end{tikzpicture}
-  \end{center}
-
-  \caption{Game class}
-
-\end{figure}
-
 \end{document}
