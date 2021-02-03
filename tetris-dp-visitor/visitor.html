@@ -1,0 +1,64 @@
+<p>&nbsp;</p><span>&nbsp;&nbsp; &nbsp;</span>In <i>Game Programming
+Patterns,</i>&nbsp;Robert Nystrom recommends keeping all game
+components in a single collection. This design makes it easier to
+handle updating each component between frames; simply iterate over the
+list, calling update on each component. This design is utilized in the
+JaredAll/Tetris implementation. However, there are two different
+domains in which a game component may be updated. The first is the
+engine domain; this update is responsible for updating the state of
+each individual Tetris component. The second is the Tetris domain, in
+which the update is responsible for updating the relationships between
+Tetris components. At what point should Tetris interactions between
+the different Tetris specific game components be implemented? As these
+are separate domains, their respective logic should be kept
+separate. Additionally, the engine is only aware that each component
+it is updating is a <code>GameComponent</code>. In order to update the
+relationships between the Tetris constituents, the calling code must
+have access to the Tetris specific interfaces. Enter the Visitor
+pattern.
+
+First, the <code>TetrisComponent</code>s are kept in a vector in
+the <code>Game</code> class. In order to maintain cleanliness (and
+follow the Open Close principle from good old Uncle Bob), updating each
+<code>TetrisComponent</code> must be done in a uniform fashion. This
+is achieved by having each <code>TetrisComponent</code> accept a
+<code>TetrisVisitor</code>.<div><br /><div>&nbsp; 
+
+<iframe height="480" src="https://drive.google.com/file/d/1LR2nlOauQnk9C_15jRVYdHZ2KlA8bIJV/preview" width="640"></iframe>&nbsp;</div><div><br /></div><div><!--game class-->
+
+<span>&nbsp;&nbsp; &nbsp;</span>Each implementation
+of <code>TetrisComponent</code> invokes the visitor to visit
+itself. This is demonstrated in the <code>TetrisPiece</code>
+class. The <code>TetrisVisitor</code> must implement methods that
+update each <code>TetrisComponent</code> implementation. Which
+specific visitor method is invoked is determined dynamically, at
+runtime. Since the concrete implementation
+of <code>TetrisComponent</code> invokes the visitor, the visitor is
+aware of that implementation's specific interface. In this way, the
+visitor can update the pieces, the board, and the panels as pieces, a
+board, and panels, without the <code>Game</code> ever being aware of
+the implementations in its <code>TetrisComponent</code>
+collection. With this design, the visitor is responsible for updating
+the relationships between the different Tetris components. As the
+engine is responsible for drawing each component, handling user input,
+and so on, the <code>Game</code> class is responsible for maintaining
+the necessary Tetris relationships, and it does so via
+a <code>TetrisVisitor</code>.</div><div><br /></div><div>&nbsp;
+
+<iframe height="480" src="https://drive.google.com/file/d/11220tH1gYEScM0MJ3MNRsXeQYR-HEZEC/preview" width="640"></iframe>&nbsp;</div><div><br /></div><div><!--visitor arch-->
+
+<span>&nbsp;&nbsp; &nbsp;</span>In the JaredAll/Tetris implementation, there is only one visitor in
+use: the <code>TetrisVisitor</code>. However, as indicated in the UML,
+this class implements the <code>ComponentVisitor</code> interface. As
+of this post, there is no sound associated with the different Tetris
+events. It would be possible to implement audio with another visitor,
+perhaps a <code>TetrisAudioVisitor</code>. The <code>Game</code> would
+then maintain a collection of <code>ComponentVisitor</code>s, and
+invoke each on all of its <code>TetrisComponent</code>s. At that
+point, which actual implementation would be invoked would depend on
+two things: the implementation of the <code>TetrisComponent</code>,
+and the implementation of the <code>ComponentVisitor</code>. This
+technique is called <i>double dispatch</i>, as it takes two
+polymorphic calls to determine which code is executed.&nbsp;</div><div><br /></div><div><span>&nbsp;&nbsp; &nbsp;</span>The source code for the JaredAll/Tetris implementation can be found
+<a href="https://github.com/JaredAll/Tetris">here</a>.
+</div></div>
