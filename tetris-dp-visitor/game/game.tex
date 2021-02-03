@@ -1,0 +1,41 @@
+\documentclass[12pt]{article}
+
+\usepackage[letterpaper,top=1in,bottom=1in,left=1.25in,right=1.25in]{geometry}
+\usepackage{setspace}
+\usepackage[parfill]{parskip}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tikz,ifthen,xstring,calc,pgfkeys,pgfopts}
+\usepackage{tikz-uml}
+\usepackage{float}
+
+\tikzumlset{fill class=black!15}
+
+\begin{document}
+
+\begin{figure}
+
+  \begin{center}
+    \begin{tikzpicture}
+
+      \umlclass[x=2, y=0, width=20ex]{Game}{
+        unique\_ptr$<$TetrisVisitor$>$ visitor \\
+        vector$<$unique\_ptr$<$TetrisComponent$>>$ components
+      }{
+        update\_components(): void \\
+        \{ \\
+        \hspace{0.3cm} for( auto\& component : components ) \\
+        \hspace{0.3cm} \{ \\
+        \hspace{0.6cm} component --$>$ accept( *visitor ) \\
+        \hspace{0.3cm} \} \\
+        \} \\
+      }
+      
+    \end{tikzpicture}
+  \end{center}
+
+  \caption{Game class}
+
+\end{figure}
+
+\end{document}

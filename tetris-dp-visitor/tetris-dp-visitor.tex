@@ -1,0 +1,112 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,top=1in,bottom=1in,left=1.25in,right=1.25in]{geometry}
+\usepackage{setspace}
+\usepackage[parfill]{parskip}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tikz,ifthen,xstring,calc,pgfkeys,pgfopts}
+\usepackage{tikz-uml}
+\usepackage{float}
+
+\tikzumlset{fill class=black!15}
+
+\begin{document}
+
+\begin{figure}
+
+  \begin{center}
+    \begin{tikzpicture}
+
+      \umlclass[x=2, y=10, width=15ex]{ComponentVisitor}{
+      }{
+        \umlvirt{visitTetrisPiece(TetrisPiece\&) : void = 0} \\
+        \umlvirt{visitTetrisBoard(TetrisBoard\&) : void = 0} \\
+        \umlvirt{visitPanel(Panel\&) : void = 0}
+      }
+
+      \umlclass[x=2, y=6, width=15ex]{TetrisVisitor}{
+      }{
+        visitTetrisPiece(TetrisPiece\&) : void \\
+        visitTetrisBoard(TetrisBoard\&) : void \\
+        visitPanel(Panel\&) : void
+      }
+
+      \umlinherit{TetrisVisitor}{ComponentVisitor}
+
+
+    \end{tikzpicture}
+  \end{center}
+
+  \caption{TetrisVisitor architecture}
+
+\end{figure}
+
+
+\begin{figure}
+
+  \begin{center}
+    \begin{tikzpicture}
+
+
+      \umlclass[x=2, y=0, width=15ex]{TetrisComponent}{
+      }{
+        \umlvirt{accept(ComponentVisitor\& visitor) : void = 0}
+      }
+      
+      \umlclass[x=2, y=-7, width=15ex]{TetrisPiece}{
+      }{
+        accept(ComponentVisitor\& visitor) : void \\
+        \{ \\
+        \hspace{0.3cm} visitor.visit( *this ); \\
+        \}
+      }
+
+      \umlclass[x=-2, y=-4, width=15ex]{TetrisBoard}{
+      }{
+        accept(ComponentVisitor\& visitor) : void
+      }
+
+      \umlclass[x=6, y=-4, width=15ex]{Panel}{
+      }{
+        accept(ComponentVisitor\& visitor) : void 
+      }
+
+
+      \umlinherit{TetrisPiece}{TetrisComponent}
+      \umlinherit[geometry=|-|]{TetrisBoard}{TetrisComponent}
+      \umlinherit[geometry=|-|]{Panel}{TetrisComponent}
+
+    \end{tikzpicture}
+  \end{center}
+
+  \caption{TetrisComponent architecture}
+
+\end{figure}
+
+\begin{figure}
+
+  \begin{center}
+    \begin{tikzpicture}
+
+      \umlclass[x=2, y=0, width=15ex]{Game}{
+        unique\_ptr$<$TetrisVisitor$>$ visitor \\
+        vector$<$unique\_ptr$<$TetrisComponent$>>$ components
+      }{
+        update\_components(): void \\
+        \{ \\
+        \hspace{0.3cm} for( auto\& component : components ) \\
+        \hspace{0.3cm} \{ \\
+        \hspace{0.6cm} component --$>$ accept( *visitor ) \\
+        \hspace{0.3cm} \} \\
+        \} \\
+      }
+      
+    \end{tikzpicture}
+  \end{center}
+
+  \caption{Game class}
+
+\end{figure}
+
+\end{document}
