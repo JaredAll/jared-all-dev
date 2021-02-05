@@ -1,0 +1,62 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,top=1in,bottom=1in,left=1.25in,right=1.25in]{geometry}
+\usepackage{setspace}
+\usepackage[parfill]{parskip}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tikz,ifthen,xstring,calc,pgfkeys,pgfopts}
+\usepackage{tikz-uml}
+\usepackage{float}
+
+\tikzumlset{fill class=black!15}
+
+\begin{document}
+
+\begin{figure}
+
+  \begin{center}
+    \begin{tikzpicture}
+
+      \umlclass[x=0, y=6, width=15ex]{TetrisPiece}{
+        state: unique\_ptr$<$TetrisPieceState$>$
+      }{
+        update(InputEvent\& event) : void \\
+        \{ \\
+        \hspace{0.3cm} state = state --$>$ update(event); \\
+        \}\\
+        \\
+        update() : void \\
+        \{ \\
+        \hspace{0.3cm} state = state --$>$ update(); \\
+        \}\\
+      }
+
+      \umlclass[x=0, y=0, width=15ex]{TetrisPieceState}{
+        piece: TetrisPiece\& \\
+        board: TetrisBoard\&
+      }{
+        update(InputEvent\& event) : unique\_ptr$<$TetrisPieceState$>$ \\
+        \umlvirt{update() : unique\_ptr$<$TetrisPieceState$>$} \\
+        \umlvirt{determine\_next\_state() : unique\_ptr$<$TetrisPieceState$>$}
+      }
+      
+      \umlemptyclass[x=-4, y=-6, width=20ex]{FallingState}
+      \umlemptyclass[x=0, y=-6, width=20ex]{ShiftingState}
+      \umlemptyclass[x=4, y=-6, width=20ex]{WaitingState}
+
+      \umldep[anchors=240 and 133]{TetrisPiece}{TetrisPieceState}
+      \umldep[anchors=46.5 and 300]{TetrisPieceState}{TetrisPiece}
+
+      \umlinherit[geometry=|-|]{FallingState}{TetrisPieceState}
+      \umlinherit[geometry=|-|]{ShiftingState}{TetrisPieceState}
+      \umlinherit[geometry=|-|]{WaitingState}{TetrisPieceState}
+
+    \end{tikzpicture}
+  \end{center}
+
+  \caption{TetrisPieceState architecture}
+
+\end{figure}
+
+\end{document}
