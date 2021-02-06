@@ -17,7 +17,12 @@
 
   \begin{center}
     \begin{tikzpicture}
-      
+
+      \umlclass[x=2, y=5, width=15ex]{TetrisComponentFactory}{
+      }{
+        build\_component( piece\_type : PieceType ) : unique\_ptr$<$TetrisPiece$>$
+      }
+
       \umlclass[x=2, y=0, width=15ex]{TetrisPiece}{
         current\_block\_locations: vector$<$unique\_ptr$<$Point$>>$
       }{
@@ -37,6 +42,8 @@
       \umlemptyclass[x=2, y=-10, width=15ex]{JayPiece}
       \umlemptyclass[x=6, y=-10, width=15ex]{TeePiece}
 
+      \umldep{TetrisComponentFactory}{TetrisPiece}
+
       \umlinherit[geometry=|-|]{BarPiece}{TetrisPiece}
       \umlinherit[geometry=|-|]{BlockPiece}{TetrisPiece}
       \umlinherit[geometry=|-|]{EssPiece}{TetrisPiece}
@@ -45,27 +52,6 @@
 
       \umlVHVinherit[arm1=6.5cm]{EllPiece}{TetrisPiece}
       \umlVHVinherit[arm1=6.5cm]{TeePiece}{TetrisPiece}
-
-    \end{tikzpicture}
-  \end{center}
-
-  \caption{TetrisPiece architecture}
-
-\end{figure}
-
-\begin{figure}
-
-  \begin{center}
-    \begin{tikzpicture}
-      
-      \umlclass[x=-6, y=0, width=15ex]{TetrisComponentFactory}{
-      }{
-        build\_component( piece\_type : PieceType ) : unique\_ptr$<$TetrisPiece$>$
-      }
-      
-      \umlemptyclass[x=2, y=0, width=15ex]{TetrisPiece}
-
-      \umldep{TetrisComponentFactory}{TetrisPiece}
 
     \end{tikzpicture}
   \end{center}
