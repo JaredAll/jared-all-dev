@@ -1,3 +1,58 @@
+<span>&nbsp;&nbsp; &nbsp;</span>A tetris piece may find
+itself in several different situations. The most common is that of a
+delayed free fall. The piece hangs suspended; periodically, it will
+fall one blocks worth of space, there to reside until it is time to
+fall again. At any point in its slow descent, the piece may be
+rotated, shifted horizontally, or dropped to the bottom of the
+board. Any horizontal shift must incur one block's worth of additional
+progress toward its bitter teleological end, but a rotation must
+not. How can a Tetris piece keep track of its current situation and
+ensure that the necessary operations are performed given some user
+input? Furthermore, how can we maintain the implementation of these
+situations so that their logic is kept separate? In <i>Game
+Programming Patterns</i>, Robert Nystrom presents an object-oriented
+state machine as a solution. That approach has been implemented in
+JaredAll/Tetris.<div><br /><span>&nbsp;&nbsp;
+&nbsp;</span>The <code>TetrisPiece</code> maintains information about
+its current state in a reference to the
+abstract <code>TetrisPieceState</code> class. Each time the piece is
+updated, it delegates updating its own instance variables to that
+state object. It also replaces its current state object with one
+returned by the call to <code>state -&gt;
+update()</code>. The <code>update()</code> method is virtual
+in <code>TetrisPieceState</code>; each implementation is responsible
+for keeping track of which implementation the piece should have
+next. On handling an input event, the piece calls the
+state's <code>update(InputEvent&amp; event)</code> method. This method
+is implemented in the <code>TetrisPieceState</code> abstract class,
+and orchestrates which state should come next based upon the input. In
+order to do so correctly, it must be able to obtain which state would
+come next in the event that the input is erroneous (such input will be
+ignored, so the piece must resume as though the input didn't
+occur). To do so, the <code>TetrisPieceState</code> declares the
+virtual <code>determine_next_state()</code> method, in which each
+implementation calculates which state will come next.</div><div><br /><span>&nbsp;&nbsp;
+&nbsp;</span>
 
-
-<iframe src="https://drive.google.com/file/d/1PW_WZF0OeBtSwxDboa402i4bU43AVwtC/preview" width="640" height="480"></iframe>
+<iframe height="480" src="https://drive.google.com/file/d/1PW_WZF0OeBtSwxDboa402i4bU43AVwtC/preview" width="640"></iframe></div><div><br /><span>&nbsp;&nbsp; &nbsp;</span>To see this in action,
+consider a piece that has accepted user input requesting that it shift
+to the right. The <code>update(InputEvent&amp; event)</code> is called by
+the piece. That update method returns an instance
+of <code>ShiftingState</code>, which updates the piece's current
+position in the board. Since each horizontal shift requires that the
+piece also fall, <code>ShiftingState</code>'s implementation of
+update returns an instance of <code>FallingState</code>. On the next
+call to <code>update()</code>, the piece's vertical position is
+updated. After falling, the waiting period for the slow descent is
+reset, so the <code>FallingState</code> returns an instance
+of <code>WaitingState</code>. However, this scenario is only possible
+if the piece can in fact shift to the right. If it cannot,
+the <code>update(InputEvent&amp; event)</code> method returns the same
+state that its implementation would, by delegating to the
+implementation through the virtual <code>determine_next_state()</code>
+method. Throughout theses interactions, the <code>TetrisPiece</code>
+is unaware of the implementation of its current state and can simply
+call update through its pointer to the
+abstract <code>TetrisPieceState</code>.</div><div><br /><span>&nbsp;&nbsp; &nbsp;</span>The source code for the JaredAll/Tetris implementation can be found
+<a href="https://github.com/JaredAll/Tetris">here</a>.
+</div>
