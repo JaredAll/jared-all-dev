@@ -1,0 +1,30 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,top=1in,bottom=1in,left=1.25in,right=1.25in]{geometry}
+\usepackage{setspace}
+\usepackage[parfill]{parskip}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tikz,ifthen,xstring,calc,pgfkeys,pgfopts}
+\usepackage{tikz-uml}
+\usepackage{float}
+
+\tikzumlset{fill class=black!15}
+
+\begin{document}
+
+\begin{figure}
+
+  \begin{center}
+    \begin{tikzpicture}
+
+      \umlemptyclass[x=0, y=0, width=15ex]{Engine}
+
+    \end{tikzpicture}
+  \end{center}
+
+  \caption{Engine}
+
+\end{figure}
+
+\end{document}
