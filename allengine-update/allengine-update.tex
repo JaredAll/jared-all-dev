@@ -18,12 +18,27 @@
   \begin{center}
     \begin{tikzpicture}
 
-      \umlemptyclass[x=0, y=0, width=15ex]{Engine}
+      \umlclass[x=0, y=0, width=15ex]{Engine}{
+        unique\_ptr$<$InputHandler$>$ input\_handler \\
+        unique\_ptr$<$GameRenderer$>$ renderer 
+      }{
+        advance( vector$<$unique\_ptr$<$GameComponent$>>$ components )
+      }
+
+      \umlclass[x=0, y=-5, width=15ex]{GameComponent}{
+      }{
+        \umlvirt{update() : void}\\
+        \umlvirt{update( InputEvent\& event ) : void}\\
+        \umlvirt{accepting\_input() : bool}\\
+        \umlvirt{accept\_renderer( GameRenderer\& renderer ) : void}\\
+      }
+
+      \umldep{Engine}{GameComponent}
 
     \end{tikzpicture}
   \end{center}
 
-  \caption{Engine}
+  \caption{Engine Architecture}
 
 \end{figure}
 
