@@ -18,14 +18,25 @@
   \begin{center}
     \begin{tikzpicture}
 
-      \umlclass[x=0, y=0, width=15ex]{Engine}{
+      \umlclass[x=0, y=5, width=15ex]{Engine}{
         unique\_ptr$<$InputHandler$>$ input\_handler \\
         unique\_ptr$<$GameRenderer$>$ renderer 
       }{
         advance( vector$<$unique\_ptr$<$GameComponent$>>$ components )
       }
 
-      \umlclass[x=0, y=-5, width=15ex]{GameComponent}{
+      \umlclass[x=0, y=0, width=15ex]{GameRenderer}{
+        unique\_ptr$<$SDL\_Renderer, SDL\_Renderer\_Destroyer$>$ renderer \\
+      }{
+        template$<$typename T, typename = typename enable\_if\_t$<$is\_base\_of$<$GameComponent, T$>$::value$>>$ \\
+        render( vector$<$unique\_ptr$<$T$>>$\& components ) \\
+        \\
+        template$<$typename T, typename = typename enable\_if\_t$<$is\_base\_of$<$RenderComponent, T$>$::value$>>$ \\
+        render\_all( vector$<$unique\_ptr$<$T$>>$\& render\_components )
+      }
+
+
+      \umlinterface[x=-4, y=-6, width=15ex]{GameComponent}{
       }{
         \umlvirt{update() : void}\\
         \umlvirt{update( InputEvent\& event ) : void}\\
@@ -33,12 +44,46 @@
         \umlvirt{accept\_renderer( GameRenderer\& renderer ) : void}\\
       }
 
-      \umldep{Engine}{GameComponent}
+      \umlinterface[x=4.5, y=-6, width=15ex]{RenderComponent}{
+      }{
+        \umlvirt{getTexture(): shared\_ptr$<$SDL\_Texture$>$}\\
+        \umlvirt{getDestination(): shared\_ptr$<$SDL\_Rect$>$}\\
+        \umlvirt{get\_h(): int}\\
+        \umlvirt{get\_w(): int}\\
+      }
+
+      \umlclass[x=-4, y=-10, width=15ex]{TestComponent}{
+        function$<$void()$>$ update\_delegate;
+      }{
+        \umlvirt{on\_update( function$<$void()$>$ delegate ): void}
+      }
+
+      \umlclass[x=-4, y=-14, width=15ex]{PhysicsBall} {
+        vector$<$unique\_ptr$<$Sprite$>>$ blocks
+      }{
+        accept\_renderer(GameRenderer\& renderer): void \\
+        \{ \\
+        \hspace{0.3cm} renderer.render\_all( blocks ); \\
+        \}\\
+      }
+
+      \umlclass[x=4.5, y=-14, width=15ex]{Sprite} {
+      }{
+      }
+
+      \umldep{Engine}{GameRenderer}
+      \umlHVHdep[arm1=-9]{Engine}{GameComponent}
+      \umlVHVdep{GameRenderer}{GameComponent}
+      \umlVHVdep{GameRenderer}{RenderComponent}
+      \umldep{PhysicsBall}{Sprite}
+      \umlinherit{TestComponent}{GameComponent}
+      \umlinherit{PhysicsBall}{TestComponent}
+      \umlinherit{Sprite}{RenderComponent}
 
     \end{tikzpicture}
   \end{center}
 
-  \caption{Engine Architecture}
+  \caption{The Allengine Architecture}
 
 \end{figure}
 
