@@ -1,11 +1,8 @@
-
-&#9;The Allengine is the core of my personal projects from the last
+span>&nbsp;&nbsp; &nbsp;</span>The Allengine is the core of my personal projects from the last
 year. It is the engine that powers my Tetris implementation. As its
 sole creator and user, I have had complete architectural freedom in
 its design. As such, it has been my greatest opportunity to apply the
-object oriented, functional, and template techniques present in C++.
-
-&#9;Allengine is a two dimensional game engine. Clients who utilize the
+object oriented, functional, and template techniques present in C++.&nbsp;<div><br /></div><div><span>&nbsp;&nbsp; &nbsp;</span>Allengine is a two dimensional game engine. Clients who utilize the
 Allengine will typically maintain their game objects in a vector of an
 implementation of the <code>GameComponent</code>
 interface. The <code>GameComponent</code> is the building block for
@@ -25,9 +22,7 @@ doesn't add to it, those issues will be avoided. I believe this sort
 of in and out template structure is a first class citizen in the
 Kotlin programming language. In any case, the Engine need not append
 to the vector in order to handle the rendering, input, and updating
-necessary for game play. 
-
-&#9;The engine utilizes the <code>GameComponent</code> interface and
+necessary for game play.&nbsp;</div><div><br /></div><div><span>&nbsp;&nbsp; &nbsp;</span>The engine utilizes the <code>GameComponent</code> interface and
 the <code>GameRenderer</code> to render each component's
 constituent <code>RenderComponent</code>s. The <code>render(
 vector&lt;unique_ptr&lt;GameComponent&gt;&gt; components )</code> function
@@ -36,7 +31,7 @@ method required by the <code>GameComponent</code> interface. This
 renderer method is a template in the same spirit as
 the <code>Engine</code> class' advance method, and is used in the
 Engine's advance method. The virtual <code>accept_renderer(
-Game_Renderer& renderer )</code> method must be implemented to invoke
+Game_Renderer&amp; renderer )</code> method must be implemented to invoke
 the renderer on a component's vector of <code>RenderComponent</code>
 implementations. Usually, the update logic for a specific game
 component will need access to an implementation
@@ -51,20 +46,18 @@ instantiations, the <code>render_all</code> method must be invoked on
 a vector of each required <code>RenderComponent</code> implementation;
 this is why each individual <code>GameComponent</code> implementation
 must invoke the <code>render_all</code> method on its constituent
-renderings. 
-
-&#9;An example of <code>GameRenderer</code> use is in
+renderings.&nbsp;</div><div><br /></div><div><span>&nbsp;&nbsp; &nbsp;</span>An example of <code>GameRenderer</code> use is in
 the <code>PhysicsBall</code> class. The call to <code>render_all(
 blocks );</code> generates a template instantiation
 for <code>vector&lt;unique_ptr&lt;Sprite&gt;&gt;</code>. As <code>PhysicsBall</code>
 is a descendant of <code>GameComponent</code>, the <code>Engine</code>
 class can polymorphically
 invoke <code>PhysicsBall</code>'s <code>accept_renderer</code>
-implementation. The result is a client agnostic rendering framework.
+implementation. The result is a client agnostic rendering framework.</div><div><br /></div><div>&nbsp;
 
-<iframe src="https://drive.google.com/file/d/1TPteo1jeF1Lid3nh7PM-kpyjQ0N41RHY/preview" width="640" height="480"></iframe>
+<iframe height="480" src="https://drive.google.com/file/d/1TPteo1jeF1Lid3nh7PM-kpyjQ0N41RHY/preview" width="640"></iframe></div><div><br /></div><div>
 
-&#9;In order to handle input, the <code>Engine</code> delegates to
+	<span>&nbsp;&nbsp; &nbsp;</span>In order to handle input, the <code>Engine</code> delegates to
 an <code>InputHandler</code> class. This class packages up inputs
 into <code>InputEvent</code>s, which are passed down to
 those <code>GameComponent</code>s for
@@ -87,7 +80,4 @@ each component, the <code>Engine</code>'s <code>advance</code> method
 is invoked upon the client's list
 of <code>TestComponent</code>s. Again, the result is a client agnostic
 updating framework; the client need only implement the appropriate
-interfaces and invoke the appropriate methods.
-
-The code for JaredAll/Allengine can be found <a href="https://github.com/JaredAll/Allengine">here</a>.
-</div>
+interfaces and invoke the appropriate methods.&nbsp;</div><div><br /></div><div><span>&nbsp;&nbsp; &nbsp;</span>The code for JaredAll/Allengine can be found <a href="https://github.com/JaredAll/Allengine">here</a>.
