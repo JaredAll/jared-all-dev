@@ -1,17 +1,17 @@
 
-The Allengine is the core of my personal projects from the last
+&#9;The Allengine is the core of my personal projects from the last
 year. It is the engine that powers my Tetris implementation. As its
 sole creator and user, I have had complete architectural freedom in
 its design. As such, it has been my greatest opportunity to apply the
 object oriented, functional, and template techniques present in C++.
 
-Allengine is a two dimensional game engine. Clients who utilize the
+&#9;Allengine is a two dimensional game engine. Clients who utilize the
 Allengine will typically maintain their game objects in a vector of an
 implementation of the <code>GameComponent</code>
 interface. The <code>GameComponent</code> is the building block for
 game logic, as it outlines the methods which the engine calls in a
 single update cycle. The <code>advance(
-vector<unique_ptr<GameComponent>> components )</code> method handles
+vector&lt;unique_ptr&lt;GameComponent&gt;&gt; components )</code> method handles
 the render, input, and update logic for each engine cycle. This method
 is a function template that will accept a vector of any implementation
 of <code>GameComponent</code>; This allows the client's game to
@@ -27,26 +27,67 @@ Kotlin programming language. In any case, the Engine need not append
 to the vector in order to handle the rendering, input, and updating
 necessary for game play. 
 
-The engine utilizes the <code>GameComponent</code> interface and
+&#9;The engine utilizes the <code>GameComponent</code> interface and
 the <code>GameRenderer</code> to render each component's
-constituent <code>RenderComponent</code>s. The
-virtual <code>accept_renderer( Game_Renderer& renderer )</code> method
-must be implemented to invoke the renderer on a component's vector
-of <code>RenderComponent</code> implementations. The <code>render(
-vector<unique_ptr<GameComponent>> components )</code> function
+constituent <code>RenderComponent</code>s. The <code>render(
+vector&lt;unique_ptr&lt;GameComponent&gt;&gt; components )</code> function
 template in the renderer invokes the <code>accept_renderer</code>
 method required by the <code>GameComponent</code> interface. This
-function is a template in the same spirit as the <code>Engine</code>
-class' advance method, and is used to call the advance renderer
-method. Usually, the update logic for a specific game component will
-need access to an implementation of <code>RenderComponent</code>'s
-interface. Thus, it is convenient to maintain a vector of those
-implementations, rather than of the interface; however, the renderer
-must utilize the methods outlined in the interface, and will ideally
-be unaware of which implementations are being rendered. Once again, a
-template function comes to the rescue. The <code>render_all</code>
-function template will, at compile time, generate instantiations
-of <code>render_all</code> for each <code>RenderComponent</code>
-implementation.
+renderer method is a template in the same spirit as
+the <code>Engine</code> class' advance method, and is used in the
+Engine's advance method. The virtual <code>accept_renderer(
+Game_Renderer& renderer )</code> method must be implemented to invoke
+the renderer on a component's vector of <code>RenderComponent</code>
+implementations. Usually, the update logic for a specific game
+component will need access to an implementation
+of <code>RenderComponent</code>'s interface. Thus, it is convenient to
+maintain a vector of those implementations, rather than of the
+interface; however, as the renderer will ideally be unaware of which
+implementations are being rendered, it can only use the methods
+outlined in the interface. We reuse the same template technique used
+in the <code>Engine</code>'s <code>advance</code> method. In order for
+the <code>render_all</code> method to generate the proper template
+instantiations, the <code>render_all</code> method must be invoked on
+a vector of each required <code>RenderComponent</code> implementation;
+this is why each individual <code>GameComponent</code> implementation
+must invoke the <code>render_all</code> method on its constituent
+renderings. 
+
+&#9;An example of <code>GameRenderer</code> use is in
+the <code>PhysicsBall</code> class. The call to <code>render_all(
+blocks );</code> generates a template instantiation
+for <code>vector&lt;unique_ptr&lt;Sprite&gt;&gt;</code>. As <code>PhysicsBall</code>
+is a descendant of <code>GameComponent</code>, the <code>Engine</code>
+class can polymorphically
+invoke <code>PhysicsBall</code>'s <code>accept_renderer</code>
+implementation. The result is a client agnostic rendering framework.
 
 <iframe src="https://drive.google.com/file/d/1TPteo1jeF1Lid3nh7PM-kpyjQ0N41RHY/preview" width="640" height="480"></iframe>
+
+&#9;In order to handle input, the <code>Engine</code> delegates to
+an <code>InputHandler</code> class. This class packages up inputs
+into <code>InputEvent</code>s, which are passed down to
+those <code>GameComponent</code>s for
+which <code>accepting_input()</code> returns true using
+the <code>update( InputEvent&amp; )</code> method. Typically this has
+been only a single component, the player's avatar, but any number
+of <code>GameComponents</code> can accept input. For those components
+not accepting input, the <code>Engine</code> invokes
+the <code>update()</code> method. To illustrate a potential use of the
+Allengine update architecture, Figure 1 includes a small client
+architecture. The client's game maintains a vector
+of <code>TestComponent</code>s, each of which can be parameterized by
+a void function, set using the <code>on_update( function&lt;void()&gt;
+delegate )</code> method, to be called when the engine updates. At
+time of writing, there is only one subclass
+of <code>TestComponent</code>; the <code>PhysicsBall</code>
+class. However, for each additional client game component, a new
+subclass of <code>TestComponent</code> would be created. To update
+each component, the <code>Engine</code>'s <code>advance</code> method
+is invoked upon the client's list
+of <code>TestComponent</code>s. Again, the result is a client agnostic
+updating framework; the client need only implement the appropriate
+interfaces and invoke the appropriate methods.
+
+The code for JaredAll/Allengine can be found <a href="https://github.com/JaredAll/Allengine">here</a>.
+</div>
