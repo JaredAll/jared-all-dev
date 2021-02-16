@@ -22,6 +22,7 @@
         unique\_ptr$<$InputHandler$>$ input\_handler \\
         unique\_ptr$<$GameRenderer$>$ renderer 
       }{
+        template$<$typename T, typename = typename enable\_if\_t$<$is\_base\_of$<$GameComponent, T$>$::value$>>$ \\
         advance( vector$<$unique\_ptr$<$GameComponent$>>$ components )
       }
 

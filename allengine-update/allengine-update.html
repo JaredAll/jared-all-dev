@@ -1,2 +1,52 @@
 
+The Allengine is the core of my personal projects from the last
+year. It is the engine that powers my Tetris implementation. As its
+sole creator and user, I have had complete architectural freedom in
+its design. As such, it has been my greatest opportunity to apply the
+object oriented, functional, and template techniques present in C++.
+
+Allengine is a two dimensional game engine. Clients who utilize the
+Allengine will typically maintain their game objects in a vector of an
+implementation of the <code>GameComponent</code>
+interface. The <code>GameComponent</code> is the building block for
+game logic, as it outlines the methods which the engine calls in a
+single update cycle. The <code>advance(
+vector<unique_ptr<GameComponent>> components )</code> method handles
+the render, input, and update logic for each engine cycle. This method
+is a function template that will accept a vector of any implementation
+of <code>GameComponent</code>; This allows the client's game to
+maintain a vector of their game specific implementations, but still
+utilize the engine to handle those implementations seamlessly. In this
+case, the template is used to make a vector
+of <code>GameComponent</code> implementations covariant with a vector
+of <code>GameComponent</code>s. This could potentially lead to issues;
+however, as long as the Engine class only reads from the vector, and
+doesn't add to it, those issues will be avoided. I believe this sort
+of in and out template structure is a first class citizen in the
+Kotlin programming language. In any case, the Engine need not append
+to the vector in order to handle the rendering, input, and updating
+necessary for game play. 
+
+The engine utilizes the <code>GameComponent</code> interface and
+the <code>GameRenderer</code> to render each component's
+constituent <code>RenderComponent</code>s. The
+virtual <code>accept_renderer( Game_Renderer& renderer )</code> method
+must be implemented to invoke the renderer on a component's vector
+of <code>RenderComponent</code> implementations. The <code>render(
+vector<unique_ptr<GameComponent>> components )</code> function
+template in the renderer invokes the <code>accept_renderer</code>
+method required by the <code>GameComponent</code> interface. This
+function is a template in the same spirit as the <code>Engine</code>
+class' advance method, and is used to call the advance renderer
+method. Usually, the update logic for a specific game component will
+need access to an implementation of <code>RenderComponent</code>'s
+interface. Thus, it is convenient to maintain a vector of those
+implementations, rather than of the interface; however, the renderer
+must utilize the methods outlined in the interface, and will ideally
+be unaware of which implementations are being rendered. Once again, a
+template function comes to the rescue. The <code>render_all</code>
+function template will, at compile time, generate instantiations
+of <code>render_all</code> for each <code>RenderComponent</code>
+implementation.
+
 <iframe src="https://drive.google.com/file/d/1TPteo1jeF1Lid3nh7PM-kpyjQ0N41RHY/preview" width="640" height="480"></iframe>
